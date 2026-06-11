@@ -1,256 +1,733 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vaqtga oid so'zlarning ko'p tilli qiyosiy jadvali</title>
+    <title>这个小区挺好的 - 学习应用</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* 3D Flip Card Styles */
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-preserve-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        
+        /* Custom scrollbar for better appearance */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+        ::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.5); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.8); }
+
+        /* Disable select on certain elements */
+        .no-select { user-select: none; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-900">
+<body class="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-indigo-950 to-slate-900 font-sans text-gray-100 selection:bg-emerald-500/30 flex flex-col">
 
-    <div id="app" class="min-h-screen p-3 md:p-8">
-        <div class="max-w-7xl mx-auto pb-12">
-            <!-- Header -->
-            <header class="mb-8 md:mb-12 text-center px-2">
-                <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 mb-4">
-                    <i data-lucide="languages" class="text-blue-600 w-8 h-8 md:w-10 md:h-10"></i>
-                    <h1 class="text-xl md:text-3xl font-black text-slate-800 tracking-tight leading-tight">
-                        Vaqtga oid so'zlarning ko'p tilli qiyosiy jadvali
-                    </h1>
+    <div class="container mx-auto px-4 py-8 flex flex-col min-h-screen">
+        
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-3 drop-shadow-sm">
+                这个小区挺好的
+            </h1>
+            <h2 class="text-xl md:text-2xl text-yellow-300 font-light tracking-wide">
+                Dilfuza Kāng lǎo shī bilan xitoy tilini o'rganmiz
+            </h2>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8 hidden md:flex" id="desktop-tabs">
+            <!-- Rendered via JS -->
+        </div>
+        
+        <!-- Mobile Tab Select -->
+        <div class="w-full md:hidden flex justify-center mb-8">
+            <select id="mobile-tabs" class="w-full max-w-xs bg-slate-800 text-emerald-400 border border-emerald-500/50 rounded-lg p-2 outline-none">
+                <!-- Rendered via JS -->
+            </select>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow w-full max-w-4xl mx-auto" id="main-content">
+            
+            <!-- 1. Flashcards -->
+            <div id="tab-flashcards" class="tab-pane w-full max-w-lg mx-auto mt-8">
+                <div class="relative w-full h-80 perspective-1000 cursor-pointer no-select" onclick="toggleFlashcard()">
+                    <div id="flashcard-inner" class="w-full h-full transition-transform duration-500 transform-style-preserve-3d">
+                        <!-- Front -->
+                        <div class="absolute w-full h-full backface-hidden bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl flex flex-col items-center justify-center shadow-2xl">
+                            <h2 id="fc-hanzi" class="text-7xl font-bold text-white mb-6 drop-shadow-md"></h2>
+                            <button onclick="playFcAudio(event)" class="p-4 bg-emerald-500/20 hover:bg-emerald-500/40 rounded-full text-emerald-300 transition-colors">
+                                <i data-lucide="volume-2" class="w-8 h-8"></i>
+                            </button>
+                        </div>
+                        <!-- Back -->
+                        <div class="absolute w-full h-full backface-hidden rotate-y-180 bg-slate-800 border border-white/20 rounded-2xl flex flex-col items-center justify-center shadow-2xl p-6 text-center">
+                            <h3 id="fc-pinyin" class="text-3xl font-semibold text-emerald-400 mb-2"></h3>
+                            <div class="w-full h-px bg-white/20 my-4"></div>
+                            <p id="fc-uz" class="text-xl text-yellow-300 font-medium mb-2"></p>
+                            <p id="fc-ru" class="text-lg text-blue-300 mb-2"></p>
+                            <p id="fc-en" class="text-lg text-gray-300"></p>
+                        </div>
+                    </div>
                 </div>
-                <h2 class="text-md md:text-xl font-semibold text-blue-600 mb-2 px-4">
-                    Dilfuza Kāng lǎo shī bilan xitoy tilini o'rganmiz
-                </h2>
-                <p class="text-slate-500 italic text-xs md:text-sm">Chinese (pinyin) • O'zbekcha • Русский</p>
-            </header>
-
-            <!-- Timeline Scales Container -->
-            <div id="timeline-container" class="space-y-10 md:space-y-16">
-                <!-- Content will be injected by JS -->
+                <div class="flex items-center justify-between w-full mt-8">
+                    <button onclick="prevFlashcard()" class="p-3 bg-white/5 hover:bg-white/10 rounded-full text-white transition">
+                        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                    </button>
+                    <span id="fc-counter" class="text-white/60 font-mono"></span>
+                    <button onclick="nextFlashcard()" class="p-3 bg-white/5 hover:bg-white/10 rounded-full text-white transition">
+                        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                    </button>
+                </div>
             </div>
 
-            <!-- Final Footer -->
-            <footer class="mt-12 mb-8 text-center text-slate-400 text-xs md:text-sm border-t border-slate-200 pt-8 px-4 leading-relaxed">
-                <p>© 2026 Dilfuza Kāng lǎo shī (telegram@diffila)</p>
-            </footer>
-        </div>
+            <!-- 2. Vocab Quiz -->
+            <div id="tab-vocabQuiz" class="tab-pane hidden w-full max-w-xl mx-auto mt-8">
+                <div id="vocab-quiz-container"></div>
+            </div>
+
+            <!-- 3. Dialogues -->
+            <div id="tab-dialogues" class="tab-pane hidden w-full mt-6 space-y-8">
+                <div id="dialogues-container"></div>
+            </div>
+
+            <!-- 4. Grammar Explanations -->
+            <div id="tab-grammar" class="tab-pane hidden w-full mt-6 space-y-8">
+                <div id="grammar-container"></div>
+            </div>
+
+            <!-- 5. Grammar Quiz -->
+            <div id="tab-grammarQuiz" class="tab-pane hidden w-full max-w-2xl mx-auto mt-8">
+                <div id="grammar-quiz-container"></div>
+            </div>
+
+            <!-- 6. Fill in the Blanks -->
+            <div id="tab-fillBlanks" class="tab-pane hidden w-full mt-8">
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6 mb-8">
+                    <h3 class="text-xl text-yellow-300 font-semibold mb-4">So'zlarni tanlang (Kerakli so'zlarni joyiga qo'ying):</h3>
+                    <div id="fill-words-bank" class="flex flex-wrap gap-2 mb-4 p-4 bg-black/20 rounded-xl"></div>
+                    <div id="fill-blanks-container" class="space-y-6 mt-6"></div>
+                    <div id="fill-blanks-footer" class="mt-8 flex justify-between items-center border-t border-white/10 pt-6">
+                        <button onclick="checkFillAnswers()" id="fill-submit-btn" class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-lg transition disabled:opacity-50 disabled:cursor-not-allowed">
+                            Javoblarni tekshirish
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-16 pt-6 border-t border-white/10 text-center pb-4">
+            <p class="text-gray-400/80 text-sm font-light">HSK 3 NEW3.0 - Lesson 3</p>
+            <p class="text-gray-500/70 text-xs mt-1">&copy; 2026 Dilfuza Kāng lǎo shī (telegram@diffila)</p>
+        </footer>
+
     </div>
 
+    <!-- Application Logic -->
     <script>
-        const apiKey = "";
-        let loadingId = null;
+        // --- DATA ---
+        const VOCABULARY = [
+            { id: 1, hanzi: "初中", pinyin: "chūzhōng", uz: "o'rta maktab", ru: "средняя школа", en: "middle school" },
+            { id: 2, hanzi: "咱们", pinyin: "zánmen", uz: "biz", ru: "мы", en: "we; us" },
+            { id: 3, hanzi: "换", pinyin: "huàn", uz: "almashtirmoq", ru: "менять", en: "change" },
+            { id: 4, hanzi: "房子", pinyin: "fángzi", uz: "uy / kvartira", ru: "дом / квартира", en: "house" },
+            { id: 5, hanzi: "小区", pinyin: "xiǎoqū", uz: "turar-joy majmuasi", ru: "жилой комплекс", en: "residential complex" },
+            { id: 6, hanzi: "环境", pinyin: "huánjìng", uz: "atrof-muhit", ru: "окружающая среда", en: "surroundings; environment" },
+            { id: 7, hanzi: "挺", pinyin: "tǐng", uz: "juda / ancha", ru: "весьма / очень", en: "quite; very" },
+            { id: 8, hanzi: "空调", pinyin: "kōngtiáo", uz: "konditsioner", ru: "кондиционер", en: "air conditioner" },
+            { id: 9, hanzi: "洗衣机", pinyin: "xǐyījī", uz: "kir yuvish mashinasi", ru: "стиральная машина", en: "washing machine" },
+            { id: 10, hanzi: "层", pinyin: "céng", uz: "qavat", ru: "этаж", en: "floor" },
+            { id: 11, hanzi: "花园", pinyin: "huāyuán", uz: "bog'", ru: "сад", en: "garden" },
+            { id: 12, hanzi: "灯", pinyin: "dēng", uz: "chiroq", ru: "лампа / свет", en: "light" },
+            { id: 13, hanzi: "关", pinyin: "guān", uz: "o'chirmoq / yopmoq", ru: "выключать / закрывать", en: "turn off; close" },
+            { id: 14, hanzi: "冰箱", pinyin: "bīngxiāng", uz: "muzlatgich", ru: "холодильник", en: "refrigerator; fridge" },
+            { id: 15, hanzi: "卫生间", pinyin: "wèishēngjiān", uz: "vanna xonasi", ru: "ванная комната / туалет", en: "bathroom" },
+            { id: 16, hanzi: "打扫", pinyin: "dǎsǎo", uz: "tozalamoq", ru: "убирать", en: "clean" },
+            { id: 17, hanzi: "搬家", pinyin: "bānjiā", uz: "ko'chmoq", ru: "переезжать", en: "move (house)" },
+            { id: 18, hanzi: "办", pinyin: "bàn", uz: "bajarmoq / rasmiylashtirmoq", ru: "оформлять / делать", en: "do; handle" },
+            { id: 19, hanzi: "信用卡", pinyin: "xìnyòngkǎ", uz: "kredit kartasi", ru: "кредитная карта", en: "credit card" },
+            { id: 20, hanzi: "还", pinyin: "huán", uz: "qaytarmoq", ru: "возвращать", en: "return (pay back)" },
+            { id: 21, hanzi: "听说", pinyin: "tīngshuō", uz: "eshitishimcha", ru: "говорят, что...", en: "hear about" },
+            { id: 22, hanzi: "银行", pinyin: "yínháng", uz: "bank", ru: "банк", en: "bank" },
+            { id: 23, hanzi: "才", pinyin: "cái", uz: "shundagina / endi", ru: "только (поздно)", en: "not until" },
+            { id: 24, hanzi: "纸箱", pinyin: "zhǐxiāng", uz: "karton quti", ru: "картонная коробка", en: "paper box" },
+            { id: 25, hanzi: "搬", pinyin: "bān", uz: "tashimoq / ko'chirmoq", ru: "переносить", en: "move" },
+            { id: 26, hanzi: "需要", pinyin: "xūyào", uz: "kerak bo'lmoq", ru: "нуждаться", en: "need" }
+        ];
 
-        const timeData = [
+        const DIALOGUES = [
             {
-                category: '日期 (Kunlar / Дни)',
-                items: [
-                    { label: '前天', pinyin: 'qiántiān', uz: 'oldingi kun', ru: 'позавчера', offset: -2, type: 'past' },
-                    { label: '昨天', pinyin: 'zuótiān', uz: 'kecha', ru: 'вчера', offset: -1, type: 'past' },
-                    { label: '今天', pinyin: 'jīntiān', uz: 'bugun', ru: 'сегодня', offset: 0, type: 'present' },
-                    { label: '明天', pinyin: 'míngtiān', uz: 'ertaga', ru: 'завтра', offset: 1, type: 'future' },
-                    { label: '后天', pinyin: 'hòutiān', uz: 'indin', ru: 'послезавтра', offset: 2, type: 'future' },
+                title: "课文 1：在家里，刘明和王一雪在聊天儿。",
+                uzTitle: "1-Matn: Uyda, Liu Ming va Vang Yixue suhbatlashmoqda.",
+                lines: [
+                    { speaker: "王一雪", hanzi: "小雪的初中离家有点儿远，咱们换一个近点儿的房子吧。", pinyin: "Xiǎoxuě de chūzhōng lí jiā yǒudiǎnr yuǎn, zánmen huàn yígè jìn diǎnr de fángzi ba.", uz: "Xiaoxuening o'rta maktabi uydan biroz uzoq, keling, yaqinroq uyga ko'chib o'tamiz.", ru: "Средняя школа Сяосюэ немного далековато от дома, давай поменяем на жилье поближе.", en: "Xiaoxue's middle school is a bit far from home, let's move to a closer place." },
+                    { speaker: "刘明", hanzi: "好啊，我上网看看。你觉得这个小区怎么样？", pinyin: "Hǎo a, wǒ shàngwǎng kànkan. Nǐ juéde zhège xiǎoqū zěnmeyàng?", uz: "Yaxshi, men internetda ko'rib chiqaman. Bu turar-joy majmuasi haqida nima deysan?", ru: "Хорошо, я посмотрю в интернете. Как тебе этот жилой комплекс?", en: "Okay, I'll look online. What do you think of this neighborhood?" },
+                    { speaker: "王一雪", hanzi: "环境挺好的，离地铁站还不远。", pinyin: "Huánjìng tǐng hǎo de, lí dìtiězhàn hái bù yuǎn.", uz: "Atrof-muhit juda yaxshi, metro bekatidan ham uzoq emas.", ru: "Окружающая среда очень хорошая, и от станции метро недалеко.", en: "The environment is quite nice, and it's not far from the subway station." },
+                    { speaker: "王一雪", hanzi: "房子里面也不错，空调和洗衣机都是新的。", pinyin: "Fángzi lǐmiàn yě búcuò, kōngtiáo hé xǐyījī dōu shì xīn de.", uz: "Uyning ichi ham yomon emas, konditsioner va kir yuvish mashinasi yangi.", ru: "Внутри дома тоже неплохо, кондиционер и стиральная машина новые.", en: "The inside of the house is not bad either, the AC and washing machine are new." },
+                    { speaker: "刘明", hanzi: "是不错，但是我不喜欢住一层。", pinyin: "Shì búcuò, dànshì wǒ bù xǐhuan zhù yīcéng.", uz: "Yomon emas, lekin menga birinchi qavatda yashash yoqmaydi.", ru: "Действительно неплохо, но мне не нравится жить на первом этаже.", en: "It's not bad, but I don't like living on the first floor." },
+                    { speaker: "王一雪", hanzi: "这个一层带一个小花园，我觉得咱们可以去看看。", pinyin: "Zhège yīcéng dài yígè xiǎo huāyuán, wǒ juéde zánmen kěyǐ qù kànkan.", uz: "Bu birinchi qavatning kichkina bog'i bor, o'ylaymanki, borib ko'rishimiz mumkin.", ru: "На этом первом этаже есть маленький сад, думаю, мы можем пойти посмотреть.", en: "This first floor comes with a small garden, I think we should go take a look." }
                 ]
             },
             {
-                category: '星期 (Haftalar / Недели)',
-                items: [
-                    { label: '上上个星期', pinyin: 'shàng shàng gè xīngqī', uz: "o'tgan haftadan oldin", ru: 'позапрошлая неделя', offset: -2, type: 'past' },
-                    { label: '上个星期', pinyin: 'shàng gè xīngqī', uz: "o'tgan hafta", ru: 'на прошлой неделе', offset: -1, type: 'past' },
-                    { label: '这个星期', pinyin: 'zhège xīngqī', uz: 'shu hafta', ru: 'на этой неделе', offset: 0, type: 'present' },
-                    { label: '下个星期', pinyin: 'xià gè xīngqī', uz: 'kelasi hafta', ru: 'на следующей неделе', offset: 1, type: 'future' },
-                    { label: '下下个星期', pinyin: 'xià xià gè xīngqī', uz: 'kelasi haftadan keyin', ru: 'через неделю', offset: 2, type: 'future' },
+                title: "课文 2：在新家，王一雪在收拾房间，刘明进来了。",
+                uzTitle: "2-Matn: Yangi uyda, Vang Yixue xonani yig'ishtirmoqda, Liu Ming kirib keldi.",
+                lines: [
+                    { speaker: "王一雪", hanzi: "我今天早上来的时候，灯还开着。", pinyin: "Wǒ jīntiān zǎoshang lái de shíhou, dēng hái kāi zhe.", uz: "Men bugun ertalab kelganimda, chiroq hali ham yonib turgandi.", ru: "Когда я пришла сегодня утром, свет все еще горел.", en: "When I came this morning, the light was still on." },
+                    { speaker: "刘明", hanzi: "我这几天忙坏了，可能走的时候忘关了。", pinyin: "Wǒ zhè jǐ tiān máng huài le, kěnéng zǒu de shíhou wàng guān le.", uz: "Men shu kunlarda juda band bo'lib ketdim, ehtimol ketayotganda o'chirishni unutganman.", ru: "Я был ужасно занят эти дни, наверное, забыл выключить, когда уходил.", en: "I've been extremely busy these days, I probably forgot to turn it off when I left." },
+                    { speaker: "王一雪", hanzi: "冰箱不能用，这些吃的东西放在哪儿？", pinyin: "Bīngxiāng bù néng yòng, zhèxiē chī de dōngxi fàng zài nǎr?", uz: "Muzlatgichni ishlatib bo'lmayapti, bu yeguliklarni qayerga qo'yamiz?", ru: "Холодильник не работает, куда положить эту еду?", en: "The fridge is not working, where should we put this food?" },
+                    { speaker: "刘明", hanzi: "不可能吧？冰箱是新买的，我来看看。", pinyin: "Bù kěnéng ba? Bīngxiāng shì xīn mǎi de, wǒ lái kànkan.", uz: "Bo'lishi mumkin emas? Muzlatgich yangi olingan, kel ko'raychi.", ru: "Не может быть? Холодильник только что купили, дай посмотрю.", en: "Impossible? The fridge is newly bought, let me take a look." },
+                    { speaker: "王一雪", hanzi: "洗衣机也坏了吗？", pinyin: "Xǐyījī yě huài le ma?", uz: "Kir yuvish mashinasi ham buzilganmi?", ru: "Стиральная машина тоже сломалась?", en: "Is the washing machine broken too?" },
+                    { speaker: "刘明", hanzi: "没坏，但是卫生间没打扫好，还不能洗衣服。", pinyin: "Méi huài, dànshì wèishēngjiān méi dǎsǎo hǎo, hái bù néng xǐ yīfu.", uz: "Buzilmagan, lekin vanna xonasi yaxshi tozalanmagan, hali kir yuvib bo'lmaydi.", ru: "Не сломалась, но ванная комната не убрана, пока нельзя стирать вещи.", en: "Not broken, but the bathroom hasn't been cleaned well, we can't wash clothes yet." },
+                    { speaker: "王一雪", hanzi: "星期天我们真的能搬家吗？", pinyin: "Xīngqītiān wǒmen zhēnde néng bānjiā ma?", uz: "Yakshanba kuni rostdan ham ko'chib o'ta olamizmi?", ru: "Мы действительно сможем переехать в воскресенье?", en: "Can we really move on Sunday?" }
                 ]
             },
             {
-                category: '月份 (Oylar / Месяцы)',
-                items: [
-                    { label: '上上个月', pinyin: 'shàng shàng gè yuè', uz: "o'tgan oydan oldin", ru: 'позапрошлый месяц', offset: -2, type: 'past' },
-                    { label: '上个月', pinyin: 'shàng gè yuè', uz: "o'tgan oy", ru: 'в прошлом месяце', offset: -1, type: 'past' },
-                    { label: '这个月', pinyin: 'zhège yuè', uz: 'shu oy', ru: 'в этом месяце', offset: 0, type: 'present' },
-                    { label: '下个月', pinyin: 'xià gè yuè', uz: 'kelasi oy', ru: 'в следующем месяце', offset: 1, type: 'future' },
-                    { label: '下下个月', pinyin: 'xià xià gè yuè', uz: 'kelasi oydan keyin', ru: 'через месяц', offset: 2, type: 'future' },
+                title: "课文 3：在家里，刘明和王一雪在客厅聊天儿。",
+                uzTitle: "3-Matn: Uyda, Liu Ming va Vang Yixue yashash xonasida suhbatlashmoqda.",
+                lines: [
+                    { speaker: "王一雪", hanzi: "这个月花了不少钱。", pinyin: "Zhège yuè huā le bù shǎo qián.", uz: "Bu oy ancha pul sarfladik.", ru: "В этом месяце потратили немало денег.", en: "We spent quite a bit of money this month." },
+                    { speaker: "刘明", hanzi: "是的，我们买了很多搬家时要用的东西。", pinyin: "Shì de, wǒmen mǎi le hěn duō bānjiā shí yào yòng de dōngxi.", uz: "Ha, biz ko'chishda kerak bo'ladigan ko'p narsalarni sotib oldik.", ru: "Да, мы купили много вещей, нужных для переезда.", en: "Yes, we bought a lot of things needed for moving." },
+                    { speaker: "王一雪", hanzi: "咱们办张信用卡吧，花的钱可以慢慢还。听说中国银行的服务不错，办了信用卡买东西还能便宜。", pinyin: "Zánmen bàn zhāng xìnyòngkǎ ba, huā de qián kěyǐ mànman huán. Tīngshuō Zhōngguó Yínháng de fúwù búcuò, bàn le xìnyòngkǎ mǎi dōngxi hái néng piányi.", uz: "Keling, kredit kartasi ochamiz, sarflangan pulni sekin-asta qaytarish mumkin. Eshitishimcha, Xitoy bankining xizmati yaxshi, kredit kartasi orqali narsa sotib olish ham arzonroq tushadi.", ru: "Давай оформим кредитную карту, потраченные деньги можно возвращать постепенно. Говорят, обслуживание в Банке Китая неплохое, а покупки с кредитной картой обходятся дешевле.", en: "Let's apply for a credit card, we can slowly pay back the money we spend. I heard Bank of China has good service, and buying things with their credit card is cheaper." },
+                    { speaker: "刘明", hanzi: "好啊！中国银行很近，走路几分钟就能到。咱们什么时候去？", pinyin: "Hǎo a! Zhōngguó Yínháng hěn jìn, zǒulù jǐ fēnzhōng jiù néng dào. Zánmen shénme shíhou qù?", uz: "Yaxshi! Xitoy banki juda yaqin, piyoda bir necha daqiqada yetib borsa bo'ladi. Qachon boramiz?", ru: "Хорошо! Банк Китая очень близко, пешком несколько минут. Когда пойдем?", en: "Okay! Bank of China is very close, just a few minutes walk. When should we go?" },
+                    { speaker: "王一雪", hanzi: "今天下午？我下午要去医院，很晚才能回来。", pinyin: "Jīntiān xiàwǔ? Wǒ xiàwǔ yào qù yīyuàn, hěn wǎn cái néng huílái.", uz: "Bugun tushdan keyinmi? Men tushdan keyin kasalxonaga borishim kerak, juda kech qaytaman.", ru: "Сегодня после обеда? Мне нужно в больницу после обеда, я вернусь только очень поздно.", en: "This afternoon? I need to go to the hospital this afternoon, I won't be back until very late." },
+                    { speaker: "刘明", hanzi: "那我下午自己去吧。", pinyin: "Nà wǒ xiàwǔ zìjǐ qù ba.", uz: "Unda men tushdan keyin o'zim boraman.", ru: "Тогда я пойду сам после обеда.", en: "Then I'll go by myself this afternoon." }
                 ]
             },
             {
-                category: '年份 (Yillar / Годы)',
-                items: [
-                    { label: '前年', pinyin: 'qiánnián', uz: 'ikki yil oldin', ru: 'позапрошлый год', offset: -2, type: 'past' },
-                    { label: '去年', pinyin: 'qùnián', uz: "o'tgan yili", ru: 'прошлый год', offset: -1, type: 'past' },
-                    { label: '今年', pinyin: 'jīnnián', uz: 'shu yil', ru: 'этот год', offset: 0, type: 'present' },
-                    { label: '明年', pinyin: 'míngnián', uz: 'kelasi yili', ru: 'следующий год', offset: 1, type: 'future' },
-                    { label: '后年', pinyin: 'hòunián', uz: 'ikki yildan keyin', ru: 'послеследующий год', offset: 2, type: 'future' },
+                title: "课文 4：在家里，刘明和王一雪讨论搬家计划。",
+                uzTitle: "4-Matn: Uyda, Liu Ming va Vang Yixue ko'chish rejasini muhokama qilmoqda.",
+                lines: [
+                    { speaker: "刘明", hanzi: "我觉得这个星期就能搬家。我明天去买一些纸箱，很快就能准备好。搬家那天，我想请几位朋友来帮忙，最多一天就能搬完。", pinyin: "Wǒ juéde zhège xīngqī jiù néng bānjiā. Wǒ míngtiān qù mǎi yìxiē zhǐxiāng, hěn kuài jiù néng zhǔnbèi hǎo. Bānjiā nà tiān, wǒ xiǎng qǐng jǐ wèi péngyou lái bāngmáng, zuìduō yìtiān jiù néng bān wán.", uz: "Mening o'ylashimcha, shu hafta ko'chsak bo'ladi. Men ertaga bir nechta karton quti sotib olaman, tezda tayyor bo'lishi mumkin. Ko'chish kuni, bir nechta do'stlarni yordamga chaqirmoqchiman, ko'pi bilan bir kunda ko'chishni tugatamiz.", ru: "Я думаю, мы сможем переехать на этой неделе. Завтра я куплю несколько картонных коробок, мы сможем быстро все подготовить. В день переезда я хочу попросить нескольких друзей помочь, мы закончим максимум за день.", en: "I think we can move this week. I will go buy some paper boxes tomorrow, we can get ready very quickly. On moving day, I want to invite a few friends to help, we can finish moving in a day at most." },
+                    { speaker: "王一雪", hanzi: "我觉得下个月才能搬家。这周开始准备，下周去打扫新家，这么多事情最少需要两个星期才能做完。搬家那天，我们应该找一家搬家公司。", pinyin: "Wǒ juéde xià gè yuè cái néng bānjiā. Zhè zhōu kāishǐ zhǔnbèi, xià zhōu qù dǎsǎo xīn jiā, zhème duō shìqing zuì shǎo xūyào liǎng gè xīngqī cái néng zuò wán. Bānjiā nà tiān, wǒmen yīnggāi zhǎo yì jiā bānjiā gōngsī.", uz: "O'ylashimcha, faqat keyingi oy ko'cha olamiz. Bu hafta tayyorgarlikni boshlaymiz, kelasi hafta yangi uyni tozalaymiz, shuncha ishlarni tugatish uchun kamida ikki hafta kerak bo'ladi. Ko'chish kuni biz ko'chirish kompaniyasini topishimiz kerak.", ru: "Я думаю, мы сможем переехать только в следующем месяце. На этой неделе начнем подготовку, на следующей неделе пойдем убирать новый дом, на такое количество дел потребуется минимум две недели. В день переезда мы должны нанять компанию по переездам.", en: "I think we won't be able to move until next month. Start preparing this week, go clean the new house next week, so many things will take at least two weeks to finish. On moving day, we should hire a moving company." }
                 ]
             }
         ];
 
-        function pcmToWav(pcmData, sampleRate) {
-            const buffer = new ArrayBuffer(44 + pcmData.length * 2);
-            const view = new DataView(buffer);
-            const writeString = (offset, string) => {
-                for (let i = 0; i < string.length; i++) {
-                    view.setUint8(offset + i, string.charCodeAt(i));
-                }
-            };
-            writeString(0, 'RIFF');
-            view.setUint32(4, 32 + pcmData.length * 2, true);
-            writeString(8, 'WAVE');
-            writeString(12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, 1, true);
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * 2, true);
-            view.setUint16(32, 2, true);
-            view.setUint16(34, 16, true);
-            writeString(36, 'data');
-            view.setUint32(40, pcmData.length * 2, true);
-            for (let i = 0; i < pcmData.length; i++) {
-                view.setInt16(44 + i * 2, pcmData[i], true);
+        const GRAMMAR = [
+            {
+                title: "1. 程度副词“挺” (Adverb of Degree “挺”)",
+                desc_uz: "Daraja ravishi '挺' sifatlar yoki psixologik fe'llar oldidan kelib, nisbatan yuqori darajani bildiradi. Ko'pincha og'zaki nutqda ishlatiladi. Asosiy tuzilishi: 挺 + sifat/psixologik fe'l + 的.",
+                desc_ru: "Наречие степени '挺' используется перед прилагательными или психологическими глаголами для обозначения довольно высокой степени. Основная структура: 挺 + прилагательное/психологический глагол + 的.",
+                desc_en: "The adverb of degree '挺' is used before adjectives or psychological verbs to indicate a relatively high degree. Basic structure: 挺 + Adjective/Psychological Verb + 的.",
+                examples: [
+                    { hanzi: "这个小区环境挺好的。", pinyin: "Zhège xiǎoqū huánjìng tǐng hǎo de.", uz: "Bu turar-joy majmuasining muhiti juda yaxshi." },
+                    { hanzi: "这家饭馆的菜挺好吃的。", pinyin: "Zhè jiā fànguǎn de cài tǐng hǎochī de.", uz: "Bu restoranning taomlari juda mazali." },
+                    { hanzi: "买这个吧，我挺喜欢这个颜色的。", pinyin: "Mǎi zhège ba, wǒ tǐng xǐhuan zhège yánsè de.", uz: "Shuni sotib ol, menga bu rang juda yoqadi." }
+                ]
+            },
+            {
+                title: "2. 程度补语 “坏了” (Complement of Degree “坏了”)",
+                desc_uz: "Daraja to'ldiruvchisi '坏了' sifatlardan keyin kelib, o'ta yuqori darajani bildiradi, ko'pincha bo'rttirma ohangida aytiladi. Odatda salbiy vaziyatlarda ishlatiladi.",
+                desc_ru: "Дополнение степени '坏了' используется после прилагательных для указания крайне высокой степени, часто с преувеличением. Обычно используется в негативных ситуациях.",
+                desc_en: "The complement of degree '坏了' is used after adjectives to indicate an extremely high degree, often with an exaggerated tone. It is typically used in negative situations.",
+                examples: [
+                    { hanzi: "我这几天忙坏了。", pinyin: "Wǒ zhè jǐ tiān máng huài le.", uz: "Men shu kunlarda juda band bo'lib ketdim." },
+                    { hanzi: "我渴坏了，哪里能买水？", pinyin: "Wǒ kě huài le, nǎlǐ néng mǎi shuǐ?", uz: "Men judayam chanqadim, qayerdan suv sotib olsam bo'ladi?" },
+                    { hanzi: "这几天非常忙，大家都累坏了。", pinyin: "Zhè jǐ tiān fēicháng máng, dàjiā dōu lèi huài le.", uz: "Shu kunlarda juda bandmiz, hammamiz qattiq charchadik." }
+                ]
+            },
+            {
+                title: "3. “就” 和 “才” (Comparison of “就” and “才”)",
+                desc_uz: "'就' va '才' ravishlari fe'ldan oldin keladi. '就' harakatning barvaqt, tez va muammosiz sodir bo'lganini bildiradi; '才' esa harakatning kech, sekin yoki qiyinchilik bilan sodir bo'lganini bildiradi.",
+                desc_ru: "Наречия '就' и '才' используются перед глаголами. '就' указывает на то, что действие произошло рано или быстро; '才' указывает на то, что действие произошло поздно или медленно.",
+                desc_en: "The adverbs '就' and '才' are used before verbs. '就' indicates an action happened early or quickly; '才' indicates an action happened late or slowly.",
+                examples: [
+                    { hanzi: "中国银行很近，走路几分钟就能到。", pinyin: "Zhōngguó Yínháng hěn jìn, zǒulù jǐ fēnzhōng jiù néng dào.", uz: "Xitoy banki juda yaqin, piyoda bir necha daqiqada yetib borsa bo'ladi. (Tez)" },
+                    { hanzi: "我下午要去医院，很晚才能回来。", pinyin: "Wǒ xiàwǔ yào qù yīyuàn, hěn wǎn cái néng huílái.", uz: "Men tushdan keyin kasalxonaga borishim kerak, juda kech qaytaman. (Kech)" },
+                    { hanzi: "我早上五点就起床了。", pinyin: "Wǒ zǎoshang wǔ diǎn jiù qǐchuáng le.", uz: "Men ertalab soat beshdagayoq turdim. (Erta)" },
+                    { hanzi: "坐火车去北京，五个小时才能到。", pinyin: "Zuò huǒchē qù Běijīng, wǔ gè xiǎoshí cái néng dào.", uz: "Poyezdda Pekinga borish uchun besh soat kerak bo'ladi. (Sekin)" }
+                ]
             }
-            return new Blob([buffer], { type: 'audio/wav' });
-        }
+        ];
 
-        async function speak(text, id) {
-            if (loadingId) return;
-            loadingId = id;
-            updateUI();
+        const GRAMMAR_QUIZ = [
+            { q: "这个小区的环境（ ）好的。", options: ["挺", "就", "才", "坏"], answer: "挺" },
+            { q: "今天真是太忙了，大家都累（ ）了。", options: ["挺", "坏", "就", "才"], answer: "坏" },
+            { q: "我早上六点（ ）起床了。", options: ["就", "才", "坏", "挺"], answer: "就" },
+            { q: "坐火车去北京，十五个小时（ ）能到。", options: ["就", "才", "挺", "坏"], answer: "才" },
+            { q: "这里的咖啡（ ）好喝的。", options: ["坏", "才", "就", "挺"], answer: "挺" },
+            { q: "昨天晚上下雨没带伞，我冷（ ）了。", options: ["挺", "才", "坏", "就"], answer: "坏" },
+            { q: "这道题很简单，他五分钟（ ）做完了。", options: ["才", "就", "挺", "坏"], answer: "就" },
+            { q: "这本书太长了，我看了三天（ ）看完。", options: ["就", "才", "挺", "坏"], answer: "才" },
+            { q: "你新买的衣服（ ）漂亮的。", options: ["坏", "才", "挺", "就"], answer: "挺" },
+            { q: "我的手机找不到了，我急（ ）了。", options: ["挺", "坏", "才", "就"], answer: "坏" },
+            { q: "学校离我家很近，走路十分钟（ ）到。", options: ["就", "才", "挺", "坏"], answer: "就" },
+            { q: "爸爸每天工作很忙，晚上十一点（ ）下班回家。", options: ["就", "才", "挺", "坏"], answer: "才" },
+            { q: "这部电影（ ）有意思的，你应该去看看。", options: ["才", "就", "坏", "挺"], answer: "挺" },
+            { q: "我一天没吃饭，现在饿（ ）了，我们去吃饭吧。", options: ["坏", "挺", "才", "就"], answer: "坏" },
+            { q: "他非常聪明，二十岁（ ）大学毕业了。", options: ["才", "就", "挺", "坏"], answer: "就" }
+        ];
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-            const payload = {
-                contents: [{ parts: [{ text: text }] }],
-                systemInstruction: { parts: [{ text: "你是一个专业的中文老师。请只读出用户提供的中文词汇，不要说任何多余的话。保持语调清晰、自然。" }] },
-                generationConfig: {
-                    responseModalities: ["AUDIO"],
-                    speechConfig: {
-                        voiceConfig: { prebuiltVoiceConfig: { voiceName: "Aoede" } }
-                    }
-                },
-                model: "gemini-2.5-flash-preview-tts"
-            };
+        const FILL_BLANKS = [
+            { before: "你走的时候要", after: "灯。", answer: "关" },
+            { before: "我要去银行", after: "一张信用卡。", answer: "办" },
+            { before: "搬家要准备的东西", after: "多的。", answer: "挺" },
+            { before: "这本书不是我的，明天我要", after: "给朋友。", answer: "还" },
+            { before: "我太忙了，没时间打扫新家，可能下个月", after: "搬家。", answer: "才" },
+            { before: "我一直在", after: "新家，今天真是累坏了。", answer: "打扫" },
+            { before: "虽然有点儿远，但是我们很喜欢这个小区的", after: "。", answer: "环境" },
+            { before: "我", after: "她不喜欢住一层。", answer: "听说" },
+            { before: "这个小区明天不能", after: "，你知道吗？", answer: "搬家" },
+            { before: "因为她家人多，", after: "一个大房子。", answer: "需要" },
+            { before: "咱们换一个近点儿的", after: "吧。", answer: "房子" },
+            { before: "咱们办张", after: "吧，花的钱可以慢慢还。", answer: "信用卡" },
+            { before: "我们明天去买一些", after: "，很快就能准备好。", answer: "纸箱" },
+            { before: "", after: "不能用，这些吃的东西放在哪儿？", answer: "冰箱" },
+            { before: "我今天早上来的时候，", after: "还开着。", answer: "灯" },
+        ];
 
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+        const FILL_WORDS_BANK = ["关", "办", "挺", "还", "才", "打扫", "环境", "听说", "搬家", "需要", "房子", "信用卡", "纸箱", "冰箱", "灯"];
 
-                const result = await response.json();
-                const audioData = result.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+        const TABS = [
+            { id: 'flashcards', label: "Lug'atlar", icon: "book-open" },
+            { id: 'vocabQuiz', label: "Lug'at testi", icon: "help-circle" },
+            { id: 'dialogues', label: "Muloqot", icon: "message-circle" },
+            { id: 'grammar', label: "Grammatika", icon: "book-open" },
+            { id: 'grammarQuiz', label: "Grammatika testi", icon: "help-circle" },
+            { id: 'fillBlanks', label: "So'zlarni to'ldirish", icon: "file-edit" },
+        ];
 
-                if (audioData && audioData.data) {
-                    const binaryString = atob(audioData.data);
-                    const len = binaryString.length;
-                    const bytes = new Int16Array(len / 2);
-                    for (let i = 0; i < len; i += 2) {
-                        bytes[i / 2] = (binaryString.charCodeAt(i + 1) << 8) | binaryString.charCodeAt(i);
-                    }
-                    const sampleRateMatch = audioData.mimeType.match(/rate=(\d+)/);
-                    const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1]) : 24000;
-
-                    const wavBlob = pcmToWav(bytes, sampleRate);
-                    const audioUrl = URL.createObjectURL(wavBlob);
-                    const audio = new Audio(audioUrl);
-                    audio.onended = () => {
-                        loadingId = null;
-                        updateUI();
-                        URL.revokeObjectURL(audioUrl);
-                    };
-                    audio.onerror = () => {
-                        loadingId = null;
-                        updateUI();
-                    };
-                    await audio.play();
-                } else {
-                    loadingId = null;
-                    updateUI();
-                }
-            } catch (error) {
-                console.error(error);
-                loadingId = null;
-                updateUI();
-            }
-        }
-
-        function getTypeStyles(type) {
-            switch (type) {
-                case 'past': return 'bg-slate-50 text-slate-700 border-slate-200';
-                case 'present': return 'bg-blue-600 text-white border-blue-700 shadow-lg md:scale-110 z-20';
-                case 'future': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-                default: return 'bg-white text-slate-800 border-slate-200';
+        // --- UTILS ---
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN';
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.warn("Speech Synthesis not supported");
             }
         }
 
-        function updateUI() {
-            const container = document.getElementById('timeline-container');
-            container.innerHTML = timeData.map((section, sectionIdx) => `
-                <div class="relative bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-sm border border-slate-200">
-                    <div class="flex items-center gap-2 md:gap-3 mb-6 md:mb-10 border-b border-slate-100 pb-3 md:pb-4">
-                        <div class="p-1.5 md:p-2 bg-blue-50 rounded-lg">
-                            <i data-lucide="clock" class="text-blue-600 w-5 h-5"></i>
-                        </div>
-                        <h2 class="text-lg md:text-xl font-bold text-slate-700">${section.category}</h2>
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // --- GLOBAL STATE ---
+        let activeTab = 'flashcards';
+
+        // Flashcards
+        let fcIndex = 0;
+        let isFlipped = false;
+
+        // Vocab Quiz
+        let vocabQs = [];
+        let vocabCurrentQ = 0;
+        let vocabScore = 0;
+        let vocabSelectedOpt = null;
+
+        // Grammar Quiz
+        let gramQs = [];
+        let gramCurrentQ = 0;
+        let gramScore = 0;
+        let gramSelectedOpt = null;
+
+        // Fill Blanks
+        let fillAnswers = Array(FILL_BLANKS.length).fill('');
+        let fillSubmitted = false;
+
+        // --- INITIALIZATION ---
+        window.onload = () => {
+            renderTabs();
+            renderStaticContent();
+            initFlashcards();
+            initVocabQuiz();
+            initGrammarQuiz();
+            initFillBlanks();
+            lucide.createIcons();
+            switchTab('flashcards');
+        };
+
+        // --- TABS LOGIC ---
+        function renderTabs() {
+            const desktopContainer = document.getElementById('desktop-tabs');
+            const mobileSelect = document.getElementById('mobile-tabs');
+            
+            TABS.forEach(tab => {
+                // Desktop
+                const btn = document.createElement('button');
+                btn.className = `tab-btn flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 border bg-white/5 text-gray-400 border-transparent hover:bg-white/10 hover:text-white`;
+                btn.id = `btn-${tab.id}`;
+                btn.onclick = () => switchTab(tab.id);
+                btn.innerHTML = `<i data-lucide="${tab.icon}" class="w-5 h-5"></i><span>${tab.label}</span>`;
+                desktopContainer.appendChild(btn);
+
+                // Mobile
+                const opt = document.createElement('option');
+                opt.value = tab.id;
+                opt.textContent = tab.label;
+                mobileSelect.appendChild(opt);
+            });
+
+            mobileSelect.addEventListener('change', (e) => {
+                switchTab(e.target.value);
+            });
+        }
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+            
+            // Update panes
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            // Update desktop buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = `tab-btn flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 border bg-white/5 text-gray-400 border-transparent hover:bg-white/10 hover:text-white`;
+            });
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            if(activeBtn) {
+                activeBtn.className = `tab-btn flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 border bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.2)]`;
+            }
+
+            // Update mobile select
+            document.getElementById('mobile-tabs').value = tabId;
+        }
+
+        // --- FLASHCARDS LOGIC ---
+        function initFlashcards() {
+            updateFlashcardDOM();
+        }
+
+        function toggleFlashcard() {
+            isFlipped = !isFlipped;
+            const inner = document.getElementById('flashcard-inner');
+            if (isFlipped) inner.classList.add('rotate-y-180');
+            else inner.classList.remove('rotate-y-180');
+        }
+
+        function playFcAudio(e) {
+            e.stopPropagation();
+            speak(VOCABULARY[fcIndex].hanzi);
+        }
+
+        function nextFlashcard() {
+            isFlipped = false;
+            document.getElementById('flashcard-inner').classList.remove('rotate-y-180');
+            fcIndex = (fcIndex + 1) % VOCABULARY.length;
+            setTimeout(updateFlashcardDOM, 150); // wait for unflip
+        }
+
+        function prevFlashcard() {
+            isFlipped = false;
+            document.getElementById('flashcard-inner').classList.remove('rotate-y-180');
+            fcIndex = (fcIndex - 1 + VOCABULARY.length) % VOCABULARY.length;
+            setTimeout(updateFlashcardDOM, 150);
+        }
+
+        function updateFlashcardDOM() {
+            const word = VOCABULARY[fcIndex];
+            document.getElementById('fc-hanzi').innerText = word.hanzi;
+            document.getElementById('fc-pinyin').innerText = word.pinyin;
+            document.getElementById('fc-uz').innerText = `🇺🇿 ${word.uz}`;
+            document.getElementById('fc-ru').innerText = `🇷🇺 ${word.ru}`;
+            document.getElementById('fc-en').innerText = `🇬🇧 ${word.en}`;
+            document.getElementById('fc-counter').innerText = `${fcIndex + 1} / ${VOCABULARY.length}`;
+        }
+
+        // --- VOCAB QUIZ LOGIC ---
+        function initVocabQuiz() {
+            vocabQs = shuffleArray([...VOCABULARY]).map(word => {
+                const wrongOptions = shuffleArray(VOCABULARY.filter(v => v.id !== word.id)).slice(0, 3).map(v => v.uz);
+                return {
+                    word: word,
+                    options: shuffleArray([word.uz, ...wrongOptions])
+                };
+            });
+            vocabCurrentQ = 0;
+            vocabScore = 0;
+            vocabSelectedOpt = null;
+            renderVocabQuiz();
+        }
+
+        function renderVocabQuiz() {
+            const container = document.getElementById('vocab-quiz-container');
+            if (vocabCurrentQ >= vocabQs.length) {
+                // Show Result
+                container.innerHTML = `
+                    <div class="bg-white/10 backdrop-blur border border-white/20 p-8 rounded-2xl text-center max-w-md mx-auto mt-10">
+                        <i data-lucide="award" class="mx-auto text-yellow-400 mb-4 w-16 h-16"></i>
+                        <h2 class="text-3xl font-bold text-white mb-2">Natija</h2>
+                        <p class="text-xl text-gray-300 mb-6">Siz ${vocabQs.length} tadan ${vocabScore} ta to'g'ri topdingiz!</p>
+                        <button onclick="initVocabQuiz()" class="flex items-center justify-center gap-2 w-full py-3 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-white font-semibold transition">
+                            <i data-lucide="rotate-ccw" class="w-5 h-5"></i> Qayta boshlash
+                        </button>
                     </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
 
-                    <div class="absolute top-[175px] left-10 right-10 h-0.5 bg-slate-100 -z-0 hidden md:block"></div>
-
-                    <div class="flex flex-col md:flex-row md:justify-around items-stretch md:items-start gap-4 md:gap-2 relative z-10 px-1">
-                        ${section.items.map((item, i) => {
-                            const id = `${sectionIdx}-${i}`;
-                            const isLoading = loadingId === id;
-                            const isPresent = item.type === 'present';
-                            
-                            return `
-                            <div class="flex flex-row md:flex-col items-center group w-full md:w-48 gap-3 md:gap-0">
-                                <div class="md:hidden w-10 flex-shrink-0 text-center">
-                                    <span class="text-[10px] font-mono font-bold ${isPresent ? 'text-blue-600' : 'text-slate-400'}">
-                                        ${item.offset === 0 ? 'NOW' : (item.offset > 0 ? '+' + item.offset : item.offset)}
-                                    </span>
-                                </div>
-
-                                <div class="flex-grow md:w-full py-4 md:py-5 px-3 rounded-xl md:rounded-2xl border flex flex-col items-center transition-all duration-300 ${getTypeStyles(item.type)}">
-                                    <div class="flex items-center gap-2 mb-0.5">
-                                        <span class="text-xl md:text-2xl font-bold">${item.label}</span>
-                                        <button 
-                                            onclick="speak('${item.label}', '${id}')"
-                                            ${loadingId !== null ? 'disabled' : ''}
-                                            class="p-2 rounded-full transition-all ${isPresent ? 'bg-white/10 text-yellow-200' : 'bg-slate-100 text-blue-500'} ${loadingId !== null && !isLoading ? 'opacity-30' : 'opacity-100'}"
-                                        >
-                                            ${isLoading ? '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i>' : '<i data-lucide="volume-2" class="w-4 h-4"></i>'}
-                                        </button>
-                                    </div>
-                                    <span class="text-[11px] font-bold tracking-tight mb-2 text-center lowercase ${isPresent ? 'text-yellow-300' : 'text-amber-600'}">
-                                        ${item.pinyin}
-                                    </span>
-                                    <div class="w-8 h-px mb-2 ${isPresent ? 'bg-white/30' : 'bg-slate-200'}"></div>
-                                    <span class="text-[13px] md:text-[14px] font-semibold text-center mb-1 leading-tight flex items-center ${isPresent ? 'text-white' : 'text-blue-800'}">
-                                        ${item.uz}
-                                    </span>
-                                    <span class="text-[10px] md:text-[11px] text-center opacity-80 leading-tight ${isPresent ? 'text-blue-50' : 'text-slate-500 italic'}">
-                                        ${item.ru}
-                                    </span>
-                                </div>
-
-                                <span class="hidden md:inline-block mt-3 text-[10px] font-mono px-2 py-0.5 rounded-full ${isPresent ? 'bg-blue-100 text-blue-600 font-bold' : 'bg-slate-100 text-slate-400'}">
-                                    ${item.offset === 0 ? 'CURRENT' : (item.offset > 0 ? '+' + item.offset : item.offset)}
-                                </span>
-                            </div>
-                        `;}).join('')}
-                    </div>
+            const q = vocabQs[vocabCurrentQ];
+            let html = `
+                <div class="flex justify-between text-white/60 mb-4 font-mono">
+                    <span>Savol: ${vocabCurrentQ + 1}/${vocabQs.length}</span>
+                    <span>Ball: ${vocabScore}</span>
                 </div>
-            `).join('');
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 mb-6 text-center relative overflow-hidden">
+                    <h2 class="text-8xl font-bold text-white mb-4">${q.word.hanzi}</h2>
+                    <p class="text-gray-400">Ushbu so'zning ma'nosini toping</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            `;
+
+            q.options.forEach(opt => {
+                let btnClass = "bg-white/10 hover:bg-white/20 text-white";
+                if (vocabSelectedOpt) {
+                    if (opt === q.word.uz) btnClass = "bg-emerald-500/80 text-white border-emerald-400";
+                    else if (opt === vocabSelectedOpt) btnClass = "bg-red-500/80 text-white border-red-400";
+                    else btnClass = "opacity-50 bg-white/5 text-white";
+                }
+                const disabled = vocabSelectedOpt ? 'disabled' : '';
+                html += `<button onclick="handleVocabSelect('${opt.replace(/'/g, "\\'")}')" class="p-4 rounded-xl border border-transparent font-medium text-lg transition-all ${btnClass}" ${disabled}>${opt}</button>`;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
             lucide.createIcons();
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', updateUI);
+        function handleVocabSelect(opt) {
+            if (vocabSelectedOpt) return;
+            vocabSelectedOpt = opt;
+            const q = vocabQs[vocabCurrentQ];
+            if (opt === q.word.uz) vocabScore++;
+            renderVocabQuiz(); // Re-render to show colors
+
+            setTimeout(() => {
+                vocabCurrentQ++;
+                vocabSelectedOpt = null;
+                renderVocabQuiz();
+            }, 1200);
+        }
+
+        // --- GRAMMAR QUIZ LOGIC ---
+        function initGrammarQuiz() {
+            gramQs = shuffleArray([...GRAMMAR_QUIZ]).slice(0, 15);
+            gramCurrentQ = 0;
+            gramScore = 0;
+            gramSelectedOpt = null;
+            renderGrammarQuiz();
+        }
+
+        function renderGrammarQuiz() {
+            const container = document.getElementById('grammar-quiz-container');
+            if (gramCurrentQ >= gramQs.length) {
+                // Show Result
+                container.innerHTML = `
+                    <div class="bg-white/10 backdrop-blur border border-white/20 p-8 rounded-2xl text-center max-w-md mx-auto mt-10">
+                        <i data-lucide="award" class="mx-auto text-yellow-400 mb-4 w-16 h-16"></i>
+                        <h2 class="text-3xl font-bold text-white mb-2">Natija</h2>
+                        <p class="text-xl text-gray-300 mb-6">Siz ${gramQs.length} tadan ${gramScore} ta to'g'ri topdingiz!</p>
+                        <button onclick="initGrammarQuiz()" class="flex items-center justify-center gap-2 w-full py-3 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-white font-semibold transition">
+                            <i data-lucide="rotate-ccw" class="w-5 h-5"></i> Qayta boshlash
+                        </button>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            const q = gramQs[gramCurrentQ];
+            let html = `
+                <div class="flex justify-between text-white/60 mb-4 font-mono">
+                    <span>Savol: ${gramCurrentQ + 1}/${gramQs.length}</span>
+                    <span>Ball: ${gramScore}</span>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 mb-6 text-center">
+                    <h2 class="text-3xl font-medium text-white leading-relaxed">${q.q}</h2>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+            `;
+
+            q.options.forEach(opt => {
+                let btnClass = "bg-white/10 hover:bg-white/20 text-white";
+                if (gramSelectedOpt) {
+                    if (opt === q.answer) btnClass = "bg-emerald-500/80 text-white border-emerald-400";
+                    else if (opt === gramSelectedOpt) btnClass = "bg-red-500/80 text-white border-red-400";
+                    else btnClass = "opacity-50 bg-white/5 text-white";
+                }
+                const disabled = gramSelectedOpt ? 'disabled' : '';
+                html += `<button onclick="handleGrammarSelect('${opt}')" class="p-5 rounded-xl border border-transparent font-medium text-2xl transition-all ${btnClass}" ${disabled}>${opt}</button>`;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function handleGrammarSelect(opt) {
+            if (gramSelectedOpt) return;
+            gramSelectedOpt = opt;
+            const q = gramQs[gramCurrentQ];
+            if (opt === q.answer) gramScore++;
+            renderGrammarQuiz();
+
+            setTimeout(() => {
+                gramCurrentQ++;
+                gramSelectedOpt = null;
+                renderGrammarQuiz();
+            }, 1500);
+        }
+
+        // --- FILL BLANKS LOGIC ---
+        function initFillBlanks() {
+            fillAnswers = Array(FILL_BLANKS.length).fill('');
+            fillSubmitted = false;
+            
+            // Render Words Bank
+            const bankContainer = document.getElementById('fill-words-bank');
+            bankContainer.innerHTML = FILL_WORDS_BANK.map(w => `<span class="px-3 py-1 bg-white/10 rounded-lg text-emerald-300 font-medium">${w}</span>`).join('');
+            
+            renderFillBlanksList();
+        }
+
+        function renderFillBlanksList() {
+            const container = document.getElementById('fill-blanks-container');
+            let html = '';
+            
+            FILL_BLANKS.forEach((item, i) => {
+                const isCorrect = fillAnswers[i] === item.answer;
+                let selectClass = "bg-slate-800 border-2 rounded-lg px-2 py-1 text-emerald-400 outline-none min-w-[100px] text-center " + 
+                                  (fillSubmitted 
+                                    ? (isCorrect ? 'border-emerald-500 bg-emerald-500/20' : 'border-red-500 bg-red-500/20') 
+                                    : 'border-white/20 focus:border-emerald-500');
+                
+                let optionsHtml = `<option value="" disabled ${fillAnswers[i] === '' ? 'selected' : ''}></option>`;
+                FILL_WORDS_BANK.forEach(w => {
+                    optionsHtml += `<option value="${w}" ${fillAnswers[i] === w ? 'selected' : ''}>${w}</option>`;
+                });
+
+                let resultIcon = '';
+                let correction = '';
+                if (fillSubmitted) {
+                    resultIcon = isCorrect ? `<i data-lucide="check-circle-2" class="text-emerald-500 ml-auto w-6 h-6"></i>` : `<i data-lucide="x-circle" class="text-red-500 ml-auto w-6 h-6"></i>`;
+                    if(!isCorrect) correction = `<span class="text-emerald-400 text-sm ml-2">(To'g'ri: ${item.answer})</span>`;
+                }
+
+                html += `
+                    <div class="flex items-center flex-wrap gap-2 text-xl text-white bg-white/5 p-4 rounded-lg">
+                        <span class="text-white/40 text-sm font-mono mr-2">${i+1}.</span>
+                        <span>${item.before}</span>
+                        <select onchange="updateFillAnswer(${i}, this.value)" ${fillSubmitted ? 'disabled' : ''} class="${selectClass}">
+                            ${optionsHtml}
+                        </select>
+                        <span>${item.after}</span>
+                        ${resultIcon}
+                        ${correction}
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            
+            // Check button state
+            const btn = document.getElementById('fill-submit-btn');
+            if (fillSubmitted) {
+                let s = fillAnswers.filter((a, i) => a === FILL_BLANKS[i].answer).length;
+                document.getElementById('fill-blanks-footer').innerHTML = `
+                    <div class="text-2xl text-white font-bold">Natija: <span class="text-emerald-400">${s} / ${FILL_BLANKS.length}</span></div>
+                    <button onclick="initFillBlanks()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i> Qayta urinish
+                    </button>
+                `;
+            } else {
+                const isAllFilled = fillAnswers.every(a => a !== '');
+                btn.disabled = !isAllFilled;
+            }
+            lucide.createIcons();
+        }
+
+        function updateFillAnswer(index, val) {
+            if(fillSubmitted) return;
+            fillAnswers[index] = val;
+            renderFillBlanksList();
+        }
+
+        function checkFillAnswers() {
+            fillSubmitted = true;
+            renderFillBlanksList();
+        }
+
+        // --- STATIC CONTENT RENDERERS ---
+        function renderStaticContent() {
+            // Dialogues
+            const dContainer = document.getElementById('dialogues-container');
+            let dHtml = '';
+            DIALOGUES.forEach(dialogue => {
+                let linesHtml = dialogue.lines.map(line => `
+                    <div class="flex gap-4 items-start p-3 rounded-lg hover:bg-white/5 transition">
+                        <button onclick="speak('${line.hanzi.replace(/'/g, "\\'")}')" class="mt-1 flex-shrink-0 p-2 bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 rounded-full transition">
+                            <i data-lucide="volume-2" class="w-5 h-5"></i>
+                        </button>
+                        <div>
+                            <span class="inline-block px-2 py-1 bg-white/10 text-white/70 text-xs rounded mb-2 font-bold">${line.speaker}</span>
+                            <p class="text-2xl text-white font-medium mb-1">${line.hanzi}</p>
+                            <p class="text-emerald-300/80 mb-2 font-mono text-sm">${line.pinyin}</p>
+                            <p class="text-yellow-300 text-sm mb-1">🇺🇿 ${line.uz}</p>
+                            <p class="text-blue-300/70 text-sm mb-1">🇷🇺 ${line.ru}</p>
+                            <p class="text-gray-400 text-sm">🇬🇧 ${line.en}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+                dHtml += `
+                    <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl overflow-hidden">
+                        <div class="bg-white/10 p-4 border-b border-white/10">
+                            <h3 class="text-xl font-bold text-emerald-400">${dialogue.title}</h3>
+                            <p class="text-yellow-300/80 mt-1">${dialogue.uzTitle}</p>
+                        </div>
+                        <div class="p-4 space-y-4">
+                            ${linesHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            dContainer.innerHTML = dHtml;
+
+            // Grammar Explanations
+            const gContainer = document.getElementById('grammar-container');
+            let gHtml = '';
+            GRAMMAR.forEach(gram => {
+                let examplesHtml = gram.examples.map(ex => `
+                    <div class="pl-4 border-l-2 border-emerald-500/50">
+                        <p class="text-xl text-white mb-1 flex items-center gap-2">
+                            ${ex.hanzi}
+                            <button onclick="speak('${ex.hanzi.replace(/'/g, "\\'")}')" class="text-emerald-400/50 hover:text-emerald-400">
+                                <i data-lucide="volume-2" class="w-4 h-4"></i>
+                            </button>
+                        </p>
+                        <p class="text-emerald-300/70 text-sm mb-1">${ex.pinyin}</p>
+                        <p class="text-yellow-300/80 text-sm">${ex.uz}</p>
+                    </div>
+                `).join('');
+
+                gHtml += `
+                    <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
+                        <h3 class="text-2xl font-bold text-emerald-400 mb-4">${gram.title}</h3>
+                        <div class="space-y-3 mb-6 bg-black/20 p-4 rounded-xl">
+                            <p class="text-yellow-300 leading-relaxed"><span class="font-bold opacity-50">🇺🇿 UZ:</span> ${gram.desc_uz}</p>
+                            <p class="text-blue-300/80 leading-relaxed"><span class="font-bold opacity-50">🇷🇺 RU:</span> ${gram.desc_ru}</p>
+                            <p class="text-gray-300 leading-relaxed"><span class="font-bold opacity-50">🇬🇧 EN:</span> ${gram.desc_en}</p>
+                        </div>
+                        <h4 class="text-lg font-semibold text-white mb-3">Misollar / Examples:</h4>
+                        <div class="space-y-4">
+                            ${examplesHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            gContainer.innerHTML = gHtml;
+        }
     </script>
 </body>
 </html>
